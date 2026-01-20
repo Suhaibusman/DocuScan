@@ -32,20 +32,26 @@ class ScanProvider extends ChangeNotifier {
   // Filtered documents based on search
   List<DocumentModel> get filteredDocuments {
     if (_searchQuery.isEmpty) return _documents;
-    
-    return _documents.where((doc) =>
-        doc.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        (doc.extractedText?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
-        doc.tags.any((tag) => tag.toLowerCase().contains(_searchQuery.toLowerCase()))
-    ).toList();
+
+    return _documents
+        .where((doc) =>
+            doc.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            (doc.extractedText
+                    ?.toLowerCase()
+                    .contains(_searchQuery.toLowerCase()) ??
+                false) ||
+            doc.tags.any(
+                (tag) => tag.toLowerCase().contains(_searchQuery.toLowerCase())))
+        .toList();
   }
 
   // Statistics getters
   int get totalDocuments => _documents.length;
-  int get thisMonthDocuments => _documents.where((doc) =>
-      doc.createdAt.month == DateTime.now().month &&
-      doc.createdAt.year == DateTime.now().year
-  ).length;
+  int get thisMonthDocuments => _documents
+      .where((doc) =>
+          doc.createdAt.month == DateTime.now().month &&
+          doc.createdAt.year == DateTime.now().year)
+      .length;
   int get documentsWithText => _documents.where((doc) => doc.hasText).length;
 
   // Initialize provider
@@ -57,6 +63,7 @@ class ScanProvider extends ChangeNotifier {
   Future<void> loadDocuments() async {
     try {
       _documents = await _storageService.getAllDocuments();
+      _documents.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
       notifyListeners();
     } catch (e) {
       debugPrint('Failed to load documents: $e');
@@ -89,18 +96,19 @@ class ScanProvider extends ChangeNotifier {
       notifyListeners();
 
       final imageFile = await _cameraService.takePicture();
-      
+
       if (imageFile != null) {
         // Detect edges and correct perspective
         final edges = await _imageProcessor.detectDocumentEdges(imageFile);
-        
+
         final documentId = const Uuid().v4();
         final pageIndex = _currentScanImages.length;
-        
-        final outputPath = '${_storageService.documentsPath}/${documentId}_temp_$pageIndex.jpg';
+
+        final outputPath =
+            '${_storageService.documentsPath}/${documentId}_temp_$pageIndex.jpg';
         final correctedImage = await _imageProcessor.correctPerspective(
-          imageFile, 
-          edges, 
+          imageFile,
+          edges,
           outputPath,
         );
 
@@ -114,7 +122,7 @@ class ScanProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Failed to capture page: $e');
     }
-    
+
     _isProcessing = false;
     notifyListeners();
     return false;
@@ -131,14 +139,18 @@ class ScanProvider extends ChangeNotifier {
       for (int i = 0; i < _currentScanImages.length; i++) {
         final inputFile = File(_currentScanImages[i]);
         final outputPath = inputFile.path.replaceAll('_temp_', '_filtered_');
-        
+
         final filteredImage = await _imageProcessor.applyFilter(
-          inputFile, 
-          filter, 
+          inputFile,
+          filter,
           outputPath,
         );
 
         if (filteredImage != null) {
+          // Delete old file if it's different
+          if (inputFile.path != filteredImage.path) {
+            await inputFile.delete();
+          }
           _currentScanImages[i] = filteredImage.path;
         }
       }
@@ -162,17 +174,18 @@ class ScanProvider extends ChangeNotifier {
     try {
       _isProcessing = true;
       notifyListeners();
-      
+
       final documentId = const Uuid().v4();
       final now = DateTime.now();
-      
+
       // Copy images to final location
       final finalImagePaths = <String>[];
       for (int i = 0; i < _currentScanImages.length; i++) {
         final tempFile = File(_currentScanImages[i]);
-        final finalPath = await _storageService.saveImage(tempFile, documentId, i);
+        final finalPath =
+            await _storageService.saveImage(tempFile, documentId, i);
         finalImagePaths.add(finalPath);
-        
+
         // Delete temp file
         await tempFile.delete();
       }
@@ -180,7 +193,7 @@ class ScanProvider extends ChangeNotifier {
       // Create document model
       final document = DocumentModel(
         id: documentId,
-        name: _currentDocumentName.isEmpty 
+        name: _currentDocumentName.isEmpty
             ? 'Document ${now.day}/${now.month}/${now.year}'
             : _currentDocumentName,
         imagePaths: finalImagePaths,
@@ -196,7 +209,7 @@ class ScanProvider extends ChangeNotifier {
 
       // Reset scan state
       _resetScanState();
-      
+
       _isProcessing = false;
       notifyListeners();
       return true;
@@ -247,5 +260,15 @@ class ScanProvider extends ChangeNotifier {
   // Get documents by status
   List<DocumentModel> getDocumentsByStatus(DocumentStatus status) {
     return _documents.where((doc) => doc.status == status).toList();
+  }
+
+  // Remove single page from current scan
+  void removePageFromScan(int index) {
+    if (index >= 0 && index < _currentScanImages.length) {
+      final imagePath = _currentScanImages[index];
+      File(imagePath).delete().catchError((_) {});
+      _currentScanImages.removeAt(index);
+      notifyListeners();
+    }
   }
 }

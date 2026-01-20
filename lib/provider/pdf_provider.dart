@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/document_model.dart';
 import '../services/storage_service.dart';
 import '../services/ocr_service.dart';
@@ -20,7 +21,8 @@ class PdfProvider extends ChangeNotifier {
   String? get currentPdfPath => _currentPdfPath;
 
   // Generate PDF from document
-  Future<String?> generatePdf(DocumentModel document, {
+  Future<String?> generatePdf(
+    DocumentModel document, {
     String? watermarkText,
     bool addPageNumbers = false,
   }) async {
@@ -29,7 +31,7 @@ class PdfProvider extends ChangeNotifier {
       notifyListeners();
 
       final pdf = pw.Document();
-      
+
       for (int i = 0; i < document.imagePaths.length; i++) {
         final imageFile = File(document.imagePaths[i]);
         if (!await imageFile.exists()) continue;
@@ -41,25 +43,35 @@ class PdfProvider extends ChangeNotifier {
           pw.Page(
             pageFormat: PdfPageFormat.a4,
             build: (pw.Context context) {
-              return pw.Column(
+              return pw.Stack(
                 children: [
-                  pw.Expanded(
+                  pw.Center(
                     child: pw.Image(image, fit: pw.BoxFit.contain),
                   ),
-                  if (addPageNumbers)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.only(top: 10),
-                      child: pw.Text(
-                        'Page ${i + 1} of ${document.imagePaths.length}',
-                        style: pw.TextStyle(fontSize: 10),
+                  if (watermarkText != null)
+                    pw.Center(
+                      child: pw.Opacity(
+                        opacity: 0.3,
+                        child: pw.Transform.rotate(
+                          angle: -0.5,
+                          child: pw.Text(
+                            watermarkText,
+                            style: pw.TextStyle(
+                              fontSize: 48,
+                              color: PdfColors.grey,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  if (watermarkText != null)
-                    pw.Opacity(
-                      opacity: 0.3,
+                  if (addPageNumbers)
+                    pw.Positioned(
+                      bottom: 20,
+                      right: 20,
                       child: pw.Text(
-                        watermarkText,
-                        style: pw.TextStyle(fontSize: 20, color: PdfColors.grey),
+                        'Page ${i + 1} of ${document.imagePaths.length}',
+                        style: const pw.TextStyle(fontSize: 10),
                       ),
                     ),
                 ],
@@ -83,7 +95,7 @@ class PdfProvider extends ChangeNotifier {
       _currentPdfPath = pdfPath;
       _isGeneratingPdf = false;
       notifyListeners();
-      
+
       return pdfPath;
     } catch (e) {
       debugPrint('PDF generation failed: $e');
@@ -100,7 +112,7 @@ class PdfProvider extends ChangeNotifier {
       notifyListeners();
 
       final extractedTexts = <String>[];
-      
+
       for (final imagePath in document.imagePaths) {
         final text = await _ocrService.extractTextFromImage(imagePath);
         if (text.isNotEmpty) {
@@ -121,7 +133,7 @@ class PdfProvider extends ChangeNotifier {
 
       _isPerformingOcr = false;
       notifyListeners();
-      
+
       return fullText.isEmpty ? null : fullText;
     } catch (e) {
       debugPrint('OCR failed: $e');
@@ -152,12 +164,30 @@ class PdfProvider extends ChangeNotifier {
       final file = File(pdfPath);
       if (!await file.exists()) return false;
 
-      // Use share_plus package
-      // await Share.shareXFiles([XFile(pdfPath)], text: 'Sharing $documentName');
+      await Share.shareXFiles(
+        [XFile(pdfPath)],
+        subject: documentName,
+        text: 'Sharing document: $documentName',
+      );
       return true;
     } catch (e) {
       debugPrint('Share failed: $e');
       return false;
     }
+  }
+
+  // Generate PDF with custom settings
+  Future<String?> generateCustomPdf({
+    required DocumentModel document,
+    PdfPageFormat? pageFormat,
+    String? watermark,
+    bool pageNumbers = false,
+    bool compress = true,
+  }) async {
+    return generatePdf(
+      document,
+      watermarkText: watermark,
+      addPageNumbers: pageNumbers,
+    );
   }
 }
