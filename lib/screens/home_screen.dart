@@ -180,14 +180,14 @@ class _HomeScreenState extends State<HomeScreen> {
           Icon(
             Icons.description_outlined,
             size: 80,
-            color: AppColors.textSecondary.withOpacity(0.5),
+            color: AppColors.textSecondary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             'No documents yet',
             style: TextStyle(
               fontSize: 20,
-              color: AppColors.textSecondary.withOpacity(0.7),
+              color: AppColors.textSecondary.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 8),
@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Tap the camera button to start scanning',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary.withOpacity(0.5),
+              color: AppColors.textSecondary.withValues(alpha: 0.5),
             ),
           ),
         ],

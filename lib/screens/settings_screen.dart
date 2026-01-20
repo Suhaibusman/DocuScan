@@ -174,46 +174,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showThemeDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Choose Theme'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Light'),
-              value: 'light',
-              groupValue: _themeMode,
-              onChanged: (value) async {
-                setState(() {
-                  _themeMode = value!;
-                });
-                await _storageService.setThemeMode(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'light',
+                groupValue: _themeMode,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _themeMode = value;
+                    });
+                    await _storageService.setThemeMode(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Dark'),
-              value: 'dark',
-              groupValue: _themeMode,
-              onChanged: (value) async {
-                setState(() {
-                  _themeMode = value!;
-                });
-                await _storageService.setThemeMode(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'dark',
+                groupValue: _themeMode,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _themeMode = value;
+                    });
+                    await _storageService.setThemeMode(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('System'),
-              value: 'system',
-              groupValue: _themeMode,
-              onChanged: (value) async {
-                setState(() {
-                  _themeMode = value!;
-                });
-                await _storageService.setThemeMode(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'system',
+                groupValue: _themeMode,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _themeMode = value;
+                    });
+                    await _storageService.setThemeMode(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -224,58 +236,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Default Filter'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RadioListTile<String>(
+            ListTile(
               title: const Text('None'),
-              value: 'none',
-              groupValue: _defaultFilter,
-              onChanged: (value) async {
-                setState(() {
-                  _defaultFilter = value!;
-                });
-                await _storageService.setDefaultFilter(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'none',
+                groupValue: _defaultFilter,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _defaultFilter = value;
+                    });
+                    await _storageService.setDefaultFilter(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Grayscale'),
-              value: 'grayscale',
-              groupValue: _defaultFilter,
-              onChanged: (value) async {
-                setState(() {
-                  _defaultFilter = value!;
-                });
-                await _storageService.setDefaultFilter(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'grayscale',
+                groupValue: _defaultFilter,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _defaultFilter = value;
+                    });
+                    await _storageService.setDefaultFilter(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Black & White'),
-              value: 'blackWhite',
-              groupValue: _defaultFilter,
-              onChanged: (value) async {
-                setState(() {
-                  _defaultFilter = value!;
-                });
-                await _storageService.setDefaultFilter(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'blackWhite',
+                groupValue: _defaultFilter,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _defaultFilter = value;
+                    });
+                    await _storageService.setDefaultFilter(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Enhanced'),
-              value: 'enhanced',
-              groupValue: _defaultFilter,
-              onChanged: (value) async {
-                setState(() {
-                  _defaultFilter = value!;
-                });
-                await _storageService.setDefaultFilter(value!);
-                if (mounted) Navigator.pop(context);
-              },
+              leading: Radio<String>(
+                value: 'enhanced',
+                groupValue: _defaultFilter,
+                onChanged: (value) async {
+                  if (value != null) {
+                    setState(() {
+                      _defaultFilter = value;
+                    });
+                    await _storageService.setDefaultFilter(value);
+                    if (mounted) Navigator.pop(dialogContext);
+                  }
+                },
+              ),
             ),
           ],
         ),

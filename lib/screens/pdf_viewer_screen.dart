@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../models/document_model.dart';
 import '../providers/pdf_provider.dart';
 import '../constants/colors.dart';
@@ -14,7 +15,6 @@ class PdfViewerScreen extends StatefulWidget {
 
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
   final PdfViewerController _pdfViewerController = PdfViewerController();
-  bool _isGeneratingPdf = false;
 
   @override
   void dispose() {
@@ -139,9 +139,14 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
     );
 
     if (result != null && mounted) {
-      setState(() {
-        _isGeneratingPdf = true;
-      });
+      // Show loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
 
       final pdfPath = await pdfProvider.generatePdf(
         document,
@@ -149,9 +154,9 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         addPageNumbers: result['pageNumbers'] ?? false,
       );
 
-      setState(() {
-        _isGeneratingPdf = false;
-      });
+      if (mounted) {
+        Navigator.pop(context); // Close loading dialog
+      }
 
       if (pdfPath != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

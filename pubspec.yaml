@@ -47,7 +47,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
-  flutter_launcher_name: ^0.0.1
   
   flutter_lints: ^3.0.1
 
@@ -58,12 +57,9 @@ flutter_launcher_icons:
   adaptive_icon_background: "#2196F3"
   adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
 
-flutter_launcher_name:
-  name: "DocuScan"
-
 flutter:
   uses-material-design: true
   
-  assets:
-    - assets/images/
-    - assets/icon/
+  # assets:
+  #   - assets/images/
+  #   - assets/icon/

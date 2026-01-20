@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/document_model.dart';
 import '../constants/colors.dart';
-import '../utils/date_utils.dart';
+import '../utils/date_utils.dart' as app_date_utils;
 
 class DocumentCard extends StatelessWidget {
   final DocumentModel document;
@@ -77,7 +77,7 @@ class DocumentCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      DateUtils.formatDate(document.updatedAt),
+                      app_date_utils.DateUtils.formatDate(document.updatedAt),
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -98,7 +98,7 @@ class DocumentCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
+                        color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
@@ -118,7 +118,7 @@ class DocumentCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
