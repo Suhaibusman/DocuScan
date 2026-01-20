@@ -266,7 +266,7 @@ class ScanProvider extends ChangeNotifier {
   void removePageFromScan(int index) {
     if (index >= 0 && index < _currentScanImages.length) {
       final imagePath = _currentScanImages[index];
-      File(imagePath).delete().catchError((_) {});
+      File(imagePath).delete().catchError((_) => File(''));
       _currentScanImages.removeAt(index);
       notifyListeners();
     }

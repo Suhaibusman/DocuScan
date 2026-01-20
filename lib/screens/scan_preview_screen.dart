@@ -7,7 +7,7 @@ import '../widgets/filter_button.dart';
 import '../constants/colors.dart';
 
 class ScanPreviewScreen extends StatefulWidget {
-  const ScanPreviewScreen({Key? key}) : super(key: key);
+  const ScanPreviewScreen({super.key});
 
   @override
   State<ScanPreviewScreen> createState() => _ScanPreviewScreenState();
@@ -217,8 +217,8 @@ class _ScanPreviewScreenState extends State<ScanPreviewScreen> {
               final imagePath = scanProvider.currentScanImages[_currentPage];
               
               // Delete file and remove from list
-              File(imagePath).delete().catchError((_) {});
-              scanProvider.currentScanImages.removeAt(_currentPage);
+              File(imagePath).delete().catchError((_) => File(''));
+              scanProvider.removePageFromScan(_currentPage);
               
               // Adjust current page if necessary
               if (_currentPage >= scanProvider.currentScanImages.length) {

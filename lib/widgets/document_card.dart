@@ -10,11 +10,11 @@ class DocumentCard extends StatelessWidget {
   final VoidCallback onDelete;
 
   const DocumentCard({
-    Key? key,
+    super.key,
     required this.document,
     required this.onTap,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

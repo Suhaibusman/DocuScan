@@ -23,7 +23,7 @@ void main() async {
 }
 
 class DocuScanApp extends StatelessWidget {
-  const DocuScanApp({Key? key}) : super(key: key);
+  const DocuScanApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,10 +6,10 @@ class CameraOverlay extends StatelessWidget {
   final List<Offset>? detectedCorners;
 
   const CameraOverlay({
-    Key? key,
+    super.key,
     required this.screenSize,
     this.detectedCorners,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

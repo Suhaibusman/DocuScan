@@ -1,13 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../models/document_model.dart';
 import '../providers/pdf_provider.dart';
 import '../constants/colors.dart';
 
 class PdfViewerScreen extends StatefulWidget {
-  const PdfViewerScreen({Key? key}) : super(key: key);
+  const PdfViewerScreen({super.key});
 
   @override
   State<PdfViewerScreen> createState() => _PdfViewerScreenState();
